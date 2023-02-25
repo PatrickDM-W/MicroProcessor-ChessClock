@@ -27,7 +27,7 @@ unsigned char black_min_left;	//number of min left for black, range 0-99,		1 byt
 functions, may move to a header
 ***********************************/
 void process_7seg_time(void);
-void output_7seg_time(unsigned char digit);
+void output_7seg_time(char digit);
 void raise_flag(void);
 
 
@@ -45,7 +45,7 @@ ISR(TIMER0_OVF_vect)
 	256 * 1us = 256us for 1 overflow
 	*/
 	tick++;
-	7seg_dis_time();
+	process_7seg_time();
 	
 	/*
 	every tick, 7seg should be updated
@@ -60,7 +60,6 @@ ISR(TIMER0_OVF_vect)
 			if (white_ms_left <= 0)	//1 second gone
 			{
 				white_s_left--;
-				white_ms_left = 1000;
 				if(white_s_left <= 0)	//1 minute gone
 				{
 					white_min_left--;
@@ -74,6 +73,7 @@ ISR(TIMER0_OVF_vect)
 						white_s_left = 60;
 					}
 				}
+				white_ms_left = 1000;
 			}
 		}
 		else
@@ -82,7 +82,6 @@ ISR(TIMER0_OVF_vect)
 			if(black_ms_left <= 0)
 			{
 				black_s_left--;
-				black_ms_left = 1000;
 				if(black_s_left <= 0)	//1 minute gone
 				{
 					black_min_left--;
@@ -96,6 +95,7 @@ ISR(TIMER0_OVF_vect)
 						black_s_left = 60;
 					}
 				}
+				black_ms_left = 1000;
 			}
 		}
 		tick = 0;
@@ -143,13 +143,14 @@ Author: Patrick W
 function converts given time to min:sec
 	or sec:ms
 	as needed
+	sends digit for 7seg to display to external function
 turn is accessed as global
 white or black time is accessed as globals
 	to save memory
 ***********************************/
 void process_7seg_time(void)
 {
-	unsigned char digit;
+	char digit;
 	
 	if (white_OR_black == 0)		//white turn
 	{
@@ -157,19 +158,20 @@ void process_7seg_time(void)
 		{
 			switch (dig_7seg_select)
 			{
-				case 0:
+				case 0:				//leftmost digit
 					digit = white_min_left/10;
 					break;
 				
-				case 1:
+				case 1:				//second digit from left
 					digit = white_min_left%10;
+					digit *= -1;	//negative to indicate decimal location
 					break;
 				
-				case 2:
+				case 2:				//third digit from left
 					digit = white_s_left/10;
 					break;
 				
-				case 3:
+				case 3:				//rightmost digit
 				digit = white_s_left%10;
 					break;
 			}
@@ -184,6 +186,7 @@ void process_7seg_time(void)
 				
 				case 1:					//second left digit
 					digit = white_s_left%10;
+					digit *= -1;		//negative to indicate decimal location
 					break;
 				
 				case 2:					//third digit from left
@@ -201,25 +204,100 @@ void process_7seg_time(void)
 		{
 			switch (dig_7seg_select)
 			{
-				case 0:
-				break;
+				case 0:				//leftmost digit
+					digit = white_s_left * -1;	//negative to indicate decimal location
+					break;
 				
-				case 1:
-				break;
+				case 1:				//second digit from left
+					digit = white_ms_left/100;
+					digit = digit%10;
+					break;
 				
-				case 2:
-				break;
+				case 2:				//third digit from left
+					digit = white_ms_left/10;
+					digit = digit%10;
+					break;
 				
-				case 3:
-				break;
+				case 3:				//rightmost digit
+					digit = white_ms_left%10;
+					break;
 			}
 		}
-		
 	}
 	else							//black turn
 	{
-		
+		if(black_min_left > 0)		//display as (2)min.(2)sec
+		{
+			switch (dig_7seg_select)
+			{
+				case 0:				//leftmost digit
+				digit = black_min_left/10;
+				break;
+				
+				case 1:				//second digit from left
+				digit = black_min_left%10;
+				digit *= -1;	//negative to indicate decimal location
+				break;
+				
+				case 2:				//third digit from left
+				digit = black_s_left/10;
+				break;
+				
+				case 3:				//rightmost digit
+				digit = black_s_left%10;
+				break;
+			}
+		}
+		else if(black_s_left > 9)		//display as (2)sec.(2)ms
+		{
+			switch (dig_7seg_select)
+			{
+				case 0:					//leftmost digit
+				digit = black_s_left/10;
+				break;
+				
+				case 1:					//second left digit
+				digit = black_s_left%10;
+				digit *= -1;		//negative to indicate decimal location
+				break;
+				
+				case 2:					//third digit from left
+				digit = black_ms_left/100;
+				digit = digit%10;
+				break;
+				
+				case 3:					//rightmost digit
+				digit = black_ms_left/10;
+				digit = digit%10;
+				break;
+			}
+		}
+		else							//display as (1)sec.(3)ms
+		{
+			switch (dig_7seg_select)
+			{
+				case 0:				//leftmost digit
+				digit = black_s_left * -1;	//negative to indicate decimal location
+				break;
+				
+				case 1:				//second digit from left
+				digit = black_ms_left/100;
+				digit = digit%10;
+				break;
+				
+				case 2:				//third digit from left
+				digit = black_ms_left/10;
+				digit = digit%10;
+				break;
+				
+				case 3:				//rightmost digit
+				digit = black_ms_left%10;
+				break;
+			}
+		}
 	}
+	
+	output_7seg_time(digit);		//send to be output
 	
 	dig_7seg_select++;
 	if(dig_7seg_select >= 4)
