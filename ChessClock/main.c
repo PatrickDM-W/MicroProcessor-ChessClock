@@ -150,77 +150,79 @@ white or black time is accessed as globals
 ***********************************/
 void process_7seg_time(void)
 {
-	char digit;
+	char digit, dig_select_check;
+	dig_select_check = dig_DP_7seg_select && 0x0F;	//use to decode info of dig_DP variable
 	
 	if (white_OR_black == 0)		//white turn
 	{
 		if(white_min_left > 0)		//display as (2)min.(2)sec
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x40;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit,	0bxxxx.1000
 			{
-				case 0:				//leftmost digit
-					digit = white_min_left/10;
-					break;
-				
-				case 1:				//second digit from left
-					digit = white_min_left%10;
-					digit *= -1;	//negative to indicate decimal location
-					break;
-				
-				case 2:				//third digit from left
-					digit = white_s_left/10;
-					break;
-				
-				case 3:				//rightmost digit
+				digit = white_min_left/10;
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
+				digit = white_min_left%10;
+			}
+			else if (dig_select_check == 2)	//third digit from left
+			{
+				digit = white_s_left/10;
+			}
+			else if (dig_select_check == 1)	//rightmost digit
+			{
 				digit = white_s_left%10;
-					break;
 			}
 		}
 		else if(white_s_left > 9)		//display as (2)sec.(2)ms
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x40;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit
 			{
-				case 0:					//leftmost digit
-					digit = white_s_left/10;
-					break;
-				
-				case 1:					//second left digit
-					digit = white_s_left%10;
-					digit *= -1;		//negative to indicate decimal location
-					break;
-				
-				case 2:					//third digit from left
-					digit = white_ms_left/100;
-					digit = digit%10;
-					break;
-				
-				case 3:					//rightmost digit
-					digit = white_ms_left/10;
-					digit = digit%10;
-					break;
+				digit = white_s_left/10;
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
+				digit = white_s_left%10;
+			}
+			else if ()	//third digit from left
+			{
+				digit = white_ms_left/100;
+				digit = digit%10;
+			}
+			else if ()	//rightmost digit
+			{
+				digit = white_ms_left/10;
+				digit = digit%10;
 			}
 		}
 		else							//display as (1)sec.(3)ms
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x80;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit
 			{
-				case 0:				//leftmost digit
-					digit = white_s_left * -1;	//negative to indicate decimal location
-					break;
-				
-				case 1:				//second digit from left
-					digit = white_ms_left/100;
-					digit = digit%10;
-					break;
-				
-				case 2:				//third digit from left
-					digit = white_ms_left/10;
-					digit = digit%10;
-					break;
-				
-				case 3:				//rightmost digit
-					digit = white_ms_left%10;
-					break;
+				digit = white_s_left;
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
+				digit = white_ms_left/100;
+				digit = digit%10;
+			}
+			else if (dig_select_check == 2)	//third digit from left
+			{
+				digit = white_ms_left/10;
+				digit = digit%10;
+			}
+			else if (dig_select_check == 1)	//rightmost digit
+			{
+				digit = white_ms_left%10;
 			}
 		}
 	}
@@ -228,80 +230,99 @@ void process_7seg_time(void)
 	{
 		if(black_min_left > 0)		//display as (2)min.(2)sec
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x40;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit
 			{
-				case 0:				//leftmost digit
 				digit = black_min_left/10;
-				break;
-				
-				case 1:				//second digit from left
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
 				digit = black_min_left%10;
-				digit *= -1;	//negative to indicate decimal location
-				break;
-				
-				case 2:				//third digit from left
+			}
+			else if (dig_select_check == 2)	//third digit from left
+			{
 				digit = black_s_left/10;
-				break;
-				
-				case 3:				//rightmost digit
+			}
+			else if (dig_select_check == 1)	//rightmost digit
+			{
 				digit = black_s_left%10;
-				break;
 			}
 		}
 		else if(black_s_left > 9)		//display as (2)sec.(2)ms
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x40;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit
 			{
-				case 0:					//leftmost digit
 				digit = black_s_left/10;
-				break;
-				
-				case 1:					//second left digit
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
 				digit = black_s_left%10;
-				digit *= -1;		//negative to indicate decimal location
-				break;
-				
-				case 2:					//third digit from left
+			}
+			else if (dig_select_check == 2)	//third digit from left
+			{
 				digit = black_ms_left/100;
 				digit = digit%10;
-				break;
-				
-				case 3:					//rightmost digit
+			}
+			else if (dig_select_check == 1)	//rightmost digit
+			{
 				digit = black_ms_left/10;
 				digit = digit%10;
-				break;
 			}
 		}
 		else							//display as (1)sec.(3)ms
 		{
-			switch (dig_7seg_select)
+			dig_DP_7seg_select &= 0x0F;		//clear upper nibble
+			dig_DP_7seg_select |= 0x80;		//set DP location
+			
+			if(dig_select_check == 8)	//leftmost digit
 			{
-				case 0:				//leftmost digit
-				digit = black_s_left * -1;	//negative to indicate decimal location
-				break;
-				
-				case 1:				//second digit from left
+				digit = black_s_left;
+			}
+			else if (dig_select_check == 4)	//second digit from left
+			{
 				digit = black_ms_left/100;
 				digit = digit%10;
-				break;
-				
-				case 2:				//third digit from left
+			}
+			else if (dig_select_check == 2)	//third digit from left
+			{
 				digit = black_ms_left/10;
 				digit = digit%10;
-				break;
-				
-				case 3:				//rightmost digit
+			}
+			else if (dig_select_check == 1)	//rightmost digit
+			{
 				digit = black_ms_left%10;
-				break;
 			}
 		}
 	}
 	
 	output_7seg_time(digit);		//send to be output
 	
-	dig_7seg_select++;
-	if(dig_7seg_select >= 4)
-		dig_7seg_select=0;
+	
+	dig_DP_7seg_select &= 0xF0;	//clear bottom nibble
+	
+	switch(dig_select_check)
+	{
+		case 8:
+			dig_DP_7seg_select |= 0x04;
+			break;
+		case 4:
+			dig_DP_7seg_select |= 0x02;
+			break;
+		case 2:
+			dig_DP_7seg_select |= 0x01;
+			break;
+		case 1:
+			dig_DP_7seg_select |= 0x08;
+			break;
+		default:
+			dig_DP_7seg_select |= 0x08;
+	}
+	
 	return;
 }
 
@@ -328,30 +349,45 @@ pin map to follow:
 	12		digit 1			PB0			d8
 ***********************************/
 void output_7seg_time(char digit)
-{
-	switch (abs(digit))
+{	
+	char dig_select_test = dig_DP_7seg_select && 0x0F;
+	char DP_select_test = dig_DP_7seg_select && 0xF0;
+	
+	if(dig_select_test == 8)		//first digit
 	{
-		if(dig_7seg_select == 0)		//first digit
-		{
-			PORTB = 0x18;
-			PORTC = 0x01;
-		}
-		else if (dig_7seg_select == 1)	//second digit
-		{
-			PORTB = 0x11;
-			PORTC = 0x01;
-		}
-		else if (dig_7seg_select == 2)	//third digit
-		{
-			PORTB = 0x09;
-			PORTC = 0x01;
-		}
-		else if (dig_7seg_select == 3)	//fourth digit
-		{
-			PORTB = 0x19;
-			PORTC = 0x00;
-		}
+		PORTB = 0x18;
+		PORTC = 0x01;
 		
+		if(DP_select_test == 128)
+			PORTC |= 0x08;
+	}
+	else if (dig_select_test == 4)	//second digit
+	{
+		PORTB = 0x11;
+		PORTC = 0x01;
+		
+		if(DP_select_test == 64)
+			PORTC |= 0x08;
+	}
+	else if (dig_select_test == 2)	//third digit
+	{
+		PORTB = 0x09;
+		PORTC = 0x01;
+		
+		if(DP_select_test == 32)
+			PORTC |= 0x08;
+	}
+	else if (dig_select_test == 1)	//fourth digit
+	{
+		PORTB = 0x19;
+		PORTC = 0x00;
+		
+		if(DP_select_test == 16)
+			PORTC |= 0x08;
+	}
+
+	switch ()
+	{
 		case 0:
 			break;
 		case 1:
