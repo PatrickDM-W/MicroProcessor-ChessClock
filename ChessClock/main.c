@@ -7,21 +7,9 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "ChessClock.h"
 
 #define F_CPU 8000000UL		//8MHz internal clock source
-
-/***********************************
-globals, may be moved to a header
-***********************************/
-unsigned char tick;	//for counting timer overflows
-unsigned char dig_7seg_select;	//keep track of what 7seg to output to
-char white_OR_black = 0;	//flag for whose turn it is, 0 for white, 1 for black
-unsigned int white_ms_left;		//number of ms left for white, range 0-1000,	2 bytes
-unsigned char white_s_left;		//number of s left for white, range 0-60,		1 byte
-unsigned char white_min_left;	//number of min left for white, range 0-99,		1 byte
-unsigned int black_ms_left;		//number of ms left for black, range 0-1000,	2 bytes
-unsigned char black_s_left;		//number of s left for black, range 0-60,		1 byte
-unsigned char black_min_left;	//number of min left for black, range 0-99,		1 byte
 
 /***********************************
 functions, may move to a header
@@ -35,6 +23,7 @@ void raise_flag(void);
 hardware initializations, may move to a header
 ***********************************/
 void init_timer0(void);
+void init_hardware(void);
 
 /***********************************
 interrupts, may be moved to header
@@ -133,6 +122,17 @@ void init_timer0(void)
 	1 clock count = 1us
 	*/
 	tick = 0;
+}
+
+/***********************************
+Purpose: prepare I/O ports
+I/O: nothing
+Author: Patrick W
+***********************************/
+void init_hardware(void)
+{
+	DDRB = 0x3F;
+	DDRC = 0x3F;
 }
 
 /***********************************
@@ -303,4 +303,74 @@ void process_7seg_time(void)
 	if(dig_7seg_select >= 4)
 		dig_7seg_select=0;
 	return;
+}
+
+/***********************************
+Purpose: output to 7seg display
+I/O: digit to output
+Author: Patrick W
+
+pin map to follow:
+	LED model: 5641AS
+	pins follow CCW count starting at bottom left 1-12
+	pin		segment/digit	PORT		PIN
+	1		e				PC5			a5	
+	2		d				PC4			a4
+	3		DP				PC3			a3
+	4		c				PC2			a2
+	5		g				PC1			a1
+	6		digit 4			PC0			a0
+	7		b				PB5			d13
+	8		digit 3			PB4			d12
+	9		digit 2			PB3			d11
+	10		f				PB2			d10
+	11		a				PB1			d9
+	12		digit 1			PB0			d8
+***********************************/
+void output_7seg_time(char digit)
+{
+	switch (abs(digit))
+	{
+		if(dig_7seg_select == 0)		//first digit
+		{
+			PORTB = 0x18;
+			PORTC = 0x01;
+		}
+		else if (dig_7seg_select == 1)	//second digit
+		{
+			PORTB = 0x11;
+			PORTC = 0x01;
+		}
+		else if (dig_7seg_select == 2)	//third digit
+		{
+			PORTB = 0x09;
+			PORTC = 0x01;
+		}
+		else if (dig_7seg_select == 3)	//fourth digit
+		{
+			PORTB = 0x19;
+			PORTC = 0x00;
+		}
+		
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			break;
+		case 8:
+			break;
+		case 9:
+			break;
+	}
 }
