@@ -15,12 +15,12 @@ Author: Patrick W
 void init_timer0(void)
 {
 	GTCCR = 0x00;	//general timer/counter control reg, this is redundancy
-	TCCR0A = 0x00;	//timer control reg A, pg 106 MEGA168P datasheet, used for OC pin
-	TCCR0B = 0x02;	//reg B, pg 109 in datasheet, prescale by 8
+	TCCR0A = 0x00;	//pg 86 of atmega328p sheet no need for special modes
+	TCCR0B = 0x02;	//pg 87, prescale by 8
 	/*
-	prescale by 8, 8MHz clock source
-	new clock source = 8M/8 = 1M
-	1 clock count = 1us
+	prescale by 8, 16MHz clock source
+	new clock source = 16M/8 = 2M
+	1 clock count = 500ns
 	*/
 	tick = 0;
 }

@@ -13,7 +13,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define F_CPU 8000000UL		//8MHz internal clock source
+#define F_CPU 16000000UL		//16MHz internal clock source
 
 /* global variables */
 unsigned char tick;	//for counting timer overflows

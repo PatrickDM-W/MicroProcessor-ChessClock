@@ -13,17 +13,17 @@ interrupts, may be moved to header
 ISR(TIMER0_OVF_vect)
 {
 	/*
-	256 * 1us = 256us for 1 overflow
+	256 * 500ns = 128us for 1 overflow
 	*/
 	tick++;
 	process_7seg_time();
 	
 	/*
 	every tick, 7seg should be updated
-	every 4 ticks (~1ms), clock time should be updated
+	every 8 ticks (~1ms), clock time should be updated
 	*/
 	
-	if(tick >= 4)
+	if(tick >= 8)
 	{
 		if(white_OR_black == 0)		//white turn
 		{
@@ -95,7 +95,7 @@ I/O: none
 Author: Patrick W
 PORT		pin			LED
 ***********************************/
-raise_flag()
+void raise_flag()
 {
 	
 }

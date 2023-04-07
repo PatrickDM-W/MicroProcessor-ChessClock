@@ -64,12 +64,12 @@ void process_7seg_time(void)
 			{
 				digit = white_s_left%10;
 			}
-			else if ()	//third digit from left
+			else if (dig_select_check == 2)	//third digit from left
 			{
 				digit = white_ms_left/100;
 				digit = digit%10;
 			}
-			else if ()	//rightmost digit
+			else if (dig_select_check == 1)	//rightmost digit
 			{
 				digit = white_ms_left/10;
 				digit = digit%10;
@@ -204,7 +204,7 @@ Purpose: set 7seg display
 I/O: none
 Author: Patrick W
 ***********************************/
-output_digit_select(void)
+void output_digit_select(void)
 {
 	char dig_select_test = dig_DP_7seg_select && 0x0F;	//lower nibble
 	char DP_select_test = dig_DP_7seg_select && 0xF0;	//upper nibble
