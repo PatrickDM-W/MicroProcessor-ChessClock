@@ -19,7 +19,7 @@
 unsigned char tick;	//for counting timer overflows
 unsigned char dig_DP_7seg_select;	//keep track of what 7seg and DP
 									//lower nibble for 7seg, upper for DP
-char white_OR_black = 0;	//flag for whose turn it is, 0 for white, 1 for black
+char white_OR_black;	//flag for whose turn it is, 0 for white, 1 for black
 unsigned int white_ms_left;		//number of ms left for white, range 0-1000,	2 bytes
 unsigned char white_s_left;		//number of s left for white, range 0-60,		1 byte
 unsigned char white_min_left;	//number of min left for white, range 0-99,		1 byte

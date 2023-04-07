@@ -23,6 +23,7 @@ void init_timer0(void)
 	1 clock count = 500ns
 	*/
 	tick = 0;
+	white_OR_black = 0;
 }
 
 /***********************************

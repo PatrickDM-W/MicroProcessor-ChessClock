@@ -16,10 +16,12 @@ ISR(TIMER0_OVF_vect)
 	256 * 500ns = 128us for 1 overflow
 	*/
 	tick++;
-	process_7seg_time();
+	
+	if(tick%2)
+		process_7seg_time();
 	
 	/*
-	every tick, 7seg should be updated
+	every other tick, 7seg should be updated
 	every 8 ticks (~1ms), clock time should be updated
 	*/
 	
