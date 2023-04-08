@@ -68,4 +68,4 @@ dkms.conf
 *.atsln
 *.cproj
 *.xml
-ChessClock/Debug/
+*/Debug/
