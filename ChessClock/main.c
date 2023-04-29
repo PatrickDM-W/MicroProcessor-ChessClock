@@ -14,22 +14,20 @@ ISR(TIMER0_OVF_vect)
 {
 	/*
 	256 * 500ns = 128us for 1 overflow
+	this function is called every 128us
 	*/
 	tick++;
 	
-	if(tick%2)
-		process_7seg_time();
-	
 	/*
-	every other tick, 7seg should be updated
-	every 8 ticks (~1ms), clock time should be updated
+	every other tick, output to 7seg
+	every 8 ticks (~1ms), process time internally
 	*/
 	
 	if(tick >= 8)
 	{
 		if(white_OR_black == 0)		//white turn
 		{
-			white_ms_left--;		//decrement by 1ms every 4 ticks
+			white_ms_left--;		//decrement by 1ms every 8 ticks
 			if (white_ms_left <= 0)	//1 second gone
 			{
 				white_s_left--;
@@ -37,7 +35,7 @@ ISR(TIMER0_OVF_vect)
 				{
 					white_min_left--;
 					
-					if(white_min_left <= 0)
+					if(white_min_left < 0)
 					{
 						raise_flag();		//white has lost
 					}
@@ -51,7 +49,7 @@ ISR(TIMER0_OVF_vect)
 		}
 		else
 		{
-			black_ms_left--;		//decrement by 1ms every overflow
+			black_ms_left--;		//decrement by 1ms every 8 ticks 
 			if(black_ms_left <= 0)
 			{
 				black_s_left--;
@@ -59,7 +57,7 @@ ISR(TIMER0_OVF_vect)
 				{
 					black_min_left--;
 					
-					if(black_min_left <= 0)
+					if(black_min_left < 0)
 					{
 						raise_flag();		//black has lost
 					}
@@ -73,7 +71,6 @@ ISR(TIMER0_OVF_vect)
 		}
 		tick = 0;
 	}
-	
 }
 
 int main(void)
@@ -83,11 +80,11 @@ int main(void)
 	init_hardware();
 	
 	/* enable interrupts */
-	sei();
+	//sei();
 	
     while (1) 
     {
-		
+		raise_flag();
     }
 }
 
@@ -96,8 +93,14 @@ Purpose: light LED for game over
 I/O: none
 Author: Patrick W
 PORT		pin			LED
+
+works perfectly - April 29, 2023
 ***********************************/
 void raise_flag()
 {
+	TIMSK0 = 0x00;		//turn off timer interrupt
 	
+	output_digit_select(5);		//turn on all digits
+	PORTB |= 0x02;				//turn on segs a,d,g
+	PORTC |= 0x12;
 }
