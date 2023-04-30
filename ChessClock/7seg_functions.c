@@ -16,7 +16,7 @@ Author: Patrick W
 must run BEFORE output_7seg
 works perfectly - April 29, 2023
 ***********************************/
-void output_digit_select(char digit_select)
+void output_digit_select(unsigned char digit_select)
 {
 	switch (digit_select)
 	{
@@ -71,7 +71,7 @@ pin map to follow:
 
 This function works perfectly - April 29, 2023
 ***********************************/
-void output_7seg(char digit)
+void output_7seg(unsigned char digit)
 {	
 	switch (digit % 10)
 	{
